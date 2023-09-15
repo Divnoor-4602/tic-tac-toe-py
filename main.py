@@ -48,10 +48,28 @@ def place_character(current_user_choice, player_num):
 def win_check(current_user_choice, current_positions):
     """Algorithm to check whose the winner"""
     row_current_user, col_current_user = get_board_positions(current_user_choice)
-    # check if all elements in that row are the same
-    if len(set(current_positions[row_current_user])) == 1:
-        print("Winner")
     # extracting elements from a 2d column matrix and saving them in a list
+    col_element_ls = []
+    diag_element_ls = []
+    for row in current_positions:
+        col_element_ls.append(row[col_current_user])
+    # diagonal case:
+    if row_current_user == col_current_user:
+        for index_row, row in enumerate(current_positions):
+            for index_col, symbol in enumerate(row):
+                if index_col == index_row:
+                    diag_element_ls.append(symbol)
+        if len(set(diag_element_ls)) == 1:
+            return True
+
+    # check if all elements in that row are the same
+    elif len(set(current_positions[row_current_user])) == 1:
+        return True
+    # check if all elements in column are the same
+    elif (len(set(col_element_ls))) == 1:
+        return True
+    else:
+        pass
 
 
 game_board_setup(inital_game_positions, space_line_count, vertical_bar_count)
@@ -62,26 +80,24 @@ user = True
 
 while start:
     if user == True:
-        print("Player 1\n")
         position_place = input(
             "Player 1: Write the position to put the symbol on (eg., 2 3): "
         )
         place_character(position_place, 1)
         game_board_setup(inital_game_positions, space_line_count, vertical_bar_count)
-        win_check(position_place, inital_game_positions)
-        user = False
+        if win_check(position_place, inital_game_positions) == True:
+            start = False
+            print("The winner is player 1")
+        else:
+            user = False
     elif user == False:
-        print("Player 2\n")
         position_place = input(
             "Player 2: Write the position to put the symbol on (eg., 2 3): "
         )
         place_character(position_place, 2)
         game_board_setup(inital_game_positions, space_line_count, vertical_bar_count)
-        user = True
-
-
-# completed: Create a game board using np 2d arrays: Done
-# inprog: Allow two game modes, 1: user vs user , 2nd: user vs computer
-# inprog: Create an algorithm to check when a player wins, use consecutive columns and rows
-# todo: Make a way to put user choice in the chose column
-# todo: Should be a turn by turn system
+        if win_check(position_place, inital_game_positions) == True:
+            start = False
+            print("The winner is player 2")
+        else:
+            user = True
